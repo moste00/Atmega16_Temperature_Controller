@@ -138,3 +138,11 @@ uint16_t ADC_READ(uint8_t channel){
 	
 	return (ADC);
 }
+
+void Initialize_All() {
+		ADC_initialize();
+		set_Pin_DDR(YELLO_LED,OUT);
+		set_Pin_DDR(GREEN_LED,OUT);
+		set_Pin_DDR(RED_LED,OUT);
+		set_Pin_DDR(BUZZER,OUT);
+}

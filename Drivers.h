@@ -11,10 +11,13 @@
 #define RED_LED 10
 #define BUZZER 11
 
-//wrapper enums for "0" and "1" for better readability
+//Type definitions :
+
+//wrapper enums for "0" and "1" values for better readability
 typedef enum {IN , OUT}   Pin_State;
 typedef enum {LOW , HIGH} Pin_Val  ;
-
+	
+	
 //Hardware layer subroutines :
 
 //Subroutines that allows for individual addressing of the 32 pins directly (0 to 31)
@@ -25,5 +28,7 @@ Pin_Val read_Pin(char)         ;
 //ADC routines
 void ADC_initialize();
 uint16_t ADC_READ(uint8_t channel);
+
+void Initialize_All();
 
 #endif

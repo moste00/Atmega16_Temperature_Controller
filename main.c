@@ -9,34 +9,42 @@
 #include "Drivers.h"
 
 
-int main(void)
-{
-	ADC_initialize();
-	//initialize four output pins for peripherals 
-	set_Pin_DDR(YELLO_LED,OUT);
-	set_Pin_DDR(GREEN_LED,OUT);
-	set_Pin_DDR(RED_LED,OUT);
-	set_Pin_DDR(BUZZER,OUT);
+int main(void){
+	Initialize_All();
 	
+	//*****************************************************************************************************************************************************//
+	//*****************************************************************************************************************************************************//
+	/*
+	The main idea of the routine is to keep track of two variables :
+	 
+																previous_LED : the LED that was on at the previous timestep
+																current_LED  : the LED that should be on this timestep
+					
+	  At each timestep we update current_LED based on the temperature reading, and if it doesn't match previous_LED we turn one off and light the other
+	*/
+	//*****************************************************************************************************************************************************//
+	//*****************************************************************************************************************************************************//
+	 
+	//previous_LED should always have a value (so that we can always compare it against current_LED)
+	char previous_LED = YELLO_LED ; //arbitrary .... could be initialized to any LED 
+	char current_LED ;
 	
 	while(1){
 		//2 is a normalization factor to get temperature in Celsius
-		//Its bad practice to hard-code it like that but i can't get the symbolic calculation for it right so hack it will be
+		//Its bad practice to hard-code it like that but i can't get the symbolic calculation for it right 
 		uint16_t temp = ADC_READ(TEMPERATURE_CHANNEL) / 2;
-		
-		if(temp < 20){
-			write_Pin(GREEN_LED,HIGH);
+			
+		current_LED = (temp < 20)? GREEN_LED :
+											 (		(temp <= 40)? YELLO_LED : RED_LED		);
+										  
+		if(current_LED != previous_LED){
+			write_Pin(previous_LED , LOW);
+			if(previous_LED == RED_LED) write_Pin(BUZZER , LOW);
+			
 		}
-		
-		if(temp >= 20 && temp <= 40){
-			write_Pin(YELLO_LED,HIGH);
-		}
-		if(temp > 40 ){
-			write_Pin(RED_LED,HIGH);
-		}
-		
-		write_Pin(GREEN_LED,LOW);
-		write_Pin(YELLO_LED,LOW);
-		write_Pin(RED_LED,LOW);
+		write_Pin(current_LED , HIGH);
+		if(current_LED == RED_LED) write_Pin(BUZZER , HIGH);
+					
+		previous_LED = current_LED ;
 	}
 }
